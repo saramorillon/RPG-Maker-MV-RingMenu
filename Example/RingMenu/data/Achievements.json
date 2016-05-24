@@ -1,5 +1,0 @@
-[
-{ "id":1, "name": "Talkative", "description" : "Talk to someone", "lockedDescription" : "This is a secret achievement", "img":"talkative"},
-{ "id":2, "name": "Green fingers", "description" : "Talk to a plant", "img":"green_fingers"},
-{ "id":3, "name": "Madman", "description" : "Talk to a sign", "img":"madman"}
-]

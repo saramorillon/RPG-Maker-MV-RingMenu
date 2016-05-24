@@ -3,7 +3,7 @@
 /*globals Window_Base, Window_MenuStatus, Window_MenuCommand*/
 /*globals Scene_Menu, SceneManager, Scene_MenuBase, Scene_Skill, Scene_Equip, Scene_Status*/
 /*globals PluginManager, Graphics, Bitmap, ImageManager, TouchInput*/
-/*globals $gamePlayer */
+/*globals $gamePlayer, $gameParty */
 //=============================================================================
 // RingMenu.js
 //=============================================================================
@@ -111,6 +111,44 @@
         }
     };
 
+    function Scene_MenuFormation() {
+        this.initialize.apply(this, arguments);
+    }
+
+    Scene_MenuFormation.prototype = Object.create(Scene_MenuBase.prototype);
+    Scene_MenuFormation.prototype.constructor = Scene_MenuFormation;
+
+    Scene_MenuFormation.prototype.initialize = function () {
+        Scene_MenuBase.prototype.initialize.call(this);
+    };
+
+    Scene_MenuFormation.prototype.create = function () {
+        Scene_MenuBase.prototype.create.call(this);
+
+        this._statusWindow = new Window_MenuStatus(0, 0);
+        this._statusWindow.setFormationMode(true);
+        this._statusWindow.selectLast();
+        this._statusWindow.activate();
+        this._statusWindow.setHandler('ok', this.onFormationOk.bind(this));
+        this._statusWindow.setHandler('cancel', this.popScene.bind(this));
+        this._statusWindow.width = Graphics.boxWidth;
+        this.addWindow(this._statusWindow);
+    };
+
+    Scene_MenuFormation.prototype.onFormationOk = function () {
+        var index = this._statusWindow.index();
+        var actor = $gameParty.members()[index];
+        var pendingIndex = this._statusWindow.pendingIndex();
+        if (pendingIndex >= 0) {
+            $gameParty.swapOrder(index, pendingIndex);
+            this._statusWindow.setPendingIndex(-1);
+            this._statusWindow.redrawItem(index);
+        } else {
+            this._statusWindow.setPendingIndex(index);
+        }
+        this._statusWindow.activate();
+    };
+
     function Scene_MenuStatus() {
         this.initialize.apply(this, arguments);
     }
@@ -136,15 +174,15 @@
         this._statusWindow.width = Graphics.boxWidth;
         this.addWindow(this._statusWindow);
     };
-    
+
     Scene_MenuStatus.prototype.commandSkill = function () {
         SceneManager.push(Scene_Skill);
     };
-    
+
     Scene_MenuStatus.prototype.commandEquip = function () {
         SceneManager.push(Scene_Equip);
     };
-    
+
     Scene_MenuStatus.prototype.commandStatus = function () {
         SceneManager.push(Scene_Status);
     };
@@ -179,6 +217,10 @@
         SceneManager.push(Scene_MenuStatus);
     };
 
+    Scene_Menu.prototype.commandFormation = function () {
+        SceneManager.push(Scene_MenuFormation);
+    };
+
     Window_MenuCommand.prototype.windowWidth = function () {
         return Graphics.boxWidth;
     };
@@ -188,7 +230,7 @@
     };
 
     Window_MenuCommand.prototype.fittingHeight = function (numLines) {
-        return 1;
+        return 0;
     };
 
     Window_MenuCommand.prototype.setRingMenu = function (ringMenu) {
