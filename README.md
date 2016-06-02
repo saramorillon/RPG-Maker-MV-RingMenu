@@ -4,6 +4,8 @@ RPG Maker MV Ring Menu transforms default menu into a ring menu.
 
 # Usage
 
+![Ring Menu](https://raw.githubusercontent.com/PicusViridis/RPG-Maker-MV-Ring-Menu/master/Screenshots/Ring%20Menu.png)
+
 Ring menu icons must be png files, 32*32 px. They should be named after the symbol of the corresponding command.
 
 Symbols for default commands are :
