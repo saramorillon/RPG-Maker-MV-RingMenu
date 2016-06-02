@@ -2,6 +2,20 @@
 
 RPG Maker MV Ring Menu transforms default menu into a ring menu.
 
+# Usage
+
+Ring menu icons must be png files, 32*32 px. They should be named after the symbol of the corresponding command.
+
+Symbols for default commands are :
+* equip
+* formation
+* gameEnd
+* item
+* options
+* save
+* skill
+* status
+
 # Module settings
 
 __Images directory__
