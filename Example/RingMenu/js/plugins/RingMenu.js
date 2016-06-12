@@ -24,6 +24,10 @@
  * @desc Usable with the keyboard or only with mouse.
  * @default false
  *
+ * @param Ring radius
+ * @desc Radius of the ring menu.
+ * @default 148
+ *
  * @help This plugin does not provide plugin commands.
  */
 
@@ -35,8 +39,7 @@
     var imageDirectory = String(parameters['Images directory'] || 'img/ringMenu');
     var hoverImage = String(parameters['Hover image'] || 'hover');
     var useKeyboard = parameters['Use Keyboard'] === 'true';
-
-    var RADIUS = 148;
+    var RADIUS = Number(parameters['Ring radius'] || 148);
 
     //=============================================================================
     // Ring menu window

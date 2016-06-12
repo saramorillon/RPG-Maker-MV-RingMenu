@@ -32,6 +32,10 @@ __Use Keyboard__
 
 Defines if menu can be manipulated with keyboard. Default is false.
 
+__Ring radius__
+
+Radius of the ring menu. Default is 148.
+
 # Credits
 
 Feel free to use this script is commercial or non commercial games, but please give credits to Pivert somewhere in your game =)
