@@ -1,8 +1,8 @@
 /*jslint vars: true, nomen: true, plusplus: true, eqeq: true */
 /*globals console*/
-/*globals Window_Base, Window_MenuStatus, Window_MenuCommand,Window_Selectable*/
+/*globals Window_Base, Window_MenuStatus, Window_MenuCommand, Window_Selectable, Window_Gold, Window_Status*/
 /*globals Scene_Menu, SceneManager, Scene_MenuBase, Scene_Skill, Scene_Equip, Scene_Status*/
-/*globals PluginManager, Graphics, Bitmap, ImageManager, TouchInput*/
+/*globals PluginManager, Graphics, Bitmap, ImageManager, TouchInput, TextManager*/
 /*globals $gamePlayer, $gameParty */
 //=============================================================================
 // RingMenu.js
@@ -41,6 +41,11 @@
     var useKeyboard = parameters['Use Keyboard'] === 'true';
     var RADIUS = Number(parameters['Ring radius'] || 148);
 
+    SceneManager._screenWidth = Number(1248);
+    SceneManager._screenHeight = Number(960);
+    SceneManager._boxWidth = Number(1248);
+    SceneManager._boxHeight = Number(960);
+
     //=============================================================================
     // Ring menu window
     //=============================================================================
@@ -53,6 +58,7 @@
 
     Window_RingMenu.prototype.initialize = function (commandWindow) {
         this._commands = commandWindow._list;
+
         var x = Graphics.boxWidth / 2 - RADIUS;
         var y = Graphics.boxHeight / 2 - RADIUS;
         var width = RADIUS * 2;
@@ -167,16 +173,15 @@
     //=============================================================================
     // Scene menu
     //=============================================================================
-    var RingMenu_Menu_create = Scene_Menu.prototype.create;
+    var Scene_Menu_create = Scene_Menu.prototype.create;
     Scene_Menu.prototype.create = function () {
-        RingMenu_Menu_create.call(this);
+        Scene_Menu_create.call(this);
 
         this._goldWindow.x = Graphics.boxWidth - this._goldWindow.width;
 
         this._statusWindow.x = 0;
         this._statusWindow.width = 150;
-        this._statusWindow.height = this._statusWindow.fittingHeight(4);
-        this._statusWindow.visible = false;
+        this._statusWindow.height = Graphics.boxHeight;
 
         this._commandWindow.height = this._commandWindow.fittingHeight(1);
         this._commandWindow.width = 0;
@@ -184,7 +189,10 @@
         this._ringMenuWindow = new Window_RingMenu(this._commandWindow);
         this._ringMenuWindow.setCommandWindow(this._commandWindow);
         this._commandWindow.setRingMenu(this._ringMenuWindow);
+
         this.addWindow(this._ringMenuWindow);
+        this.addWindow(this._statusWindow);
+        this.addWindow(this._goldWindow);
 
         var i;
         for (i = 0; i < this._commandWindow._list.length; i++) {
@@ -196,28 +204,13 @@
         this._ringMenuWindow._hoverBitmap = ImageManager.loadBitmap(imageDirectory + '/', hoverImage);
     };
 
-    var RingMenu_Menu_commandPersonal = Scene_Menu.prototype.commandPersonal;
-    Scene_Menu.prototype.commandPersonal = function () {
-        RingMenu_Menu_commandPersonal.call(this);
-        this._statusWindow.visible = true;
+    Scene_Menu.prototype.createGoldWindow = function () {
+        this._goldWindow = new Window_Gold(0, 0);
+        this._goldWindow.y = Graphics.boxHeight - this._goldWindow.height;
     };
 
-    var RingMenu_Menu_commandFormation = Scene_Menu.prototype.commandFormation;
-    Scene_Menu.prototype.commandFormation = function () {
-        RingMenu_Menu_commandFormation.call(this);
-        this._statusWindow.visible = true;
-    };
-
-    var RingMenu_Menu_onPersonalCancel = Scene_Menu.prototype.onPersonalCancel;
-    Scene_Menu.prototype.onPersonalCancel = function () {
-        RingMenu_Menu_onPersonalCancel.call(this);
-        this._statusWindow.visible = false;
-    };
-
-    var RingMenu_Menu_onFormationCancel = Scene_Menu.prototype.onFormationCancel;
-    Scene_Menu.prototype.onFormationCancel = function () {
-        RingMenu_Menu_onFormationCancel.call(this);
-        this._statusWindow.visible = false;
+    Scene_Menu.prototype.createStatusWindow = function () {
+        this._statusWindow = new Window_MenuStatus(this._commandWindow.width, 0);
     };
 
     //=============================================================================
@@ -255,6 +248,10 @@
         return 102;
     };
 
+    Window_MenuStatus.prototype.itemHeight = function () {
+        return 102;
+    };
+
     Window_MenuStatus.prototype.drawItemImage = function (index) {
         var actor = $gameParty.members()[index];
         var rect = this.itemRect(index);
@@ -280,13 +277,25 @@
     Window_MenuStatus.prototype.drawItemStatus = function (index) {};
 
     //=============================================================================
+    // Window_Gold
+    //=============================================================================
+    Window_Gold.prototype.windowWidth = function () {
+        return 140;
+    };
+
+    //=============================================================================
     // Touch input
     //=============================================================================
-    var RingMenu_TouchInput_onMouseMove = TouchInput._onMouseMove;
     TouchInput._onMouseMove = function (event) {
-        RingMenu_TouchInput_onMouseMove.call(this, event);
-        this._cursorX = event.pageX;
-        this._cursorY = event.pageY;
+        var x = Graphics.pageToCanvasX(event.pageX);
+        var y = Graphics.pageToCanvasY(event.pageY);
+
+        if (this._mousePressed) {
+            this._onMove(x, y);
+        }
+
+        this._cursorX = x;
+        this._cursorY = y;
     };
 
 }());
