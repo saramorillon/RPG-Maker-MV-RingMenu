@@ -174,10 +174,6 @@
 
         this._goldWindow.x = Graphics.boxWidth - this._goldWindow.width;
 
-        this._statusWindow.x = 0;
-        this._statusWindow.width = 150;
-        this._statusWindow.height = Graphics.boxHeight;
-
         this._commandWindow.height = this._commandWindow.fittingHeight(1);
         this._commandWindow.width = 0;
 
@@ -235,16 +231,22 @@
     //=============================================================================
     // Window menu status
     //=============================================================================
-    Window_MenuStatus.prototype.lineHeight = function () {
-        return 102;
+    Window_MenuStatus.prototype.initialize = function () {
+        var width = 180;
+        var height = Graphics.boxHeight;
+        Window_Selectable.prototype.initialize.call(this, 0, 0, width, height);
+        this._formationMode = false;
+        this._pendingIndex = -1;
+        this.loadImages();
+        this.refresh();
     };
 
     Window_MenuStatus.prototype.itemWidth = function () {
-        return 102;
+        return 144;
     };
 
     Window_MenuStatus.prototype.itemHeight = function () {
-        return 102;
+        return 144;
     };
 
     Window_MenuStatus.prototype.drawItemImage = function (index) {
@@ -269,7 +271,20 @@
         this.contents.blt(bitmap, sx, sy, sw, sh, dx, dy, w, h);
     };
 
-    Window_MenuStatus.prototype.drawItemStatus = function (index) {};
+    Window_MenuStatus.prototype.drawItemStatus = function (index) {
+        var actor = $gameParty.members()[index];
+        var rect = this.itemRect(index);
+        var x = rect.x + 2;
+        var y = rect.y;
+        var width = 140;
+
+        this.contents.fontSize = 18;
+        this.drawText([TextManager.hpA, actor.hp].join(' '), x, y, width);
+        this.drawText([TextManager.mpA, actor.mp].join(' '), x + 50, y, width - 50, 'right');
+        this.drawText(actor.name(), x, y + 114, width);
+        this.drawText([TextManager.levelA, actor.level].join(' '), x + 70, y + 114, width - 70, 'right');
+        this.resetFontSettings();
+    };
 
     //=============================================================================
     // Window_Gold
