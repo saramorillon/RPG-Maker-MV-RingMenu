@@ -41,11 +41,6 @@
     var useKeyboard = parameters['Use Keyboard'] === 'true';
     var RADIUS = Number(parameters['Ring radius'] || 148);
 
-    SceneManager._screenWidth = Number(1248);
-    SceneManager._screenHeight = Number(960);
-    SceneManager._boxWidth = Number(1248);
-    SceneManager._boxHeight = Number(960);
-
     //=============================================================================
     // Ring menu window
     //=============================================================================
