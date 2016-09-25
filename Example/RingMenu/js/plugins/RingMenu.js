@@ -166,6 +166,75 @@
     };
 
     //=============================================================================
+    // Window menu status
+    //=============================================================================
+    function Window_RingMenuStatus() {
+        this.initialize.apply(this, arguments);
+    }
+
+    Window_RingMenuStatus.prototype = Object.create(Window_MenuStatus.prototype);
+    Window_RingMenuStatus.prototype.constructor = Window_RingMenuStatus;
+    
+    Window_RingMenuStatus.prototype.create = function () {
+        Window_MenuStatus.prototype.create.apply(this);
+    };
+
+    Window_RingMenuStatus.prototype.initialize = function () {
+        var width = 180;
+        var height = Graphics.boxHeight;
+        Window_Selectable.prototype.initialize.call(this, 0, 0, width, height);
+        this._formationMode = false;
+        this._pendingIndex = -1;
+        this.loadImages();
+        this.refresh();
+    };
+
+    Window_RingMenuStatus.prototype.itemWidth = function () {
+        return 144;
+    };
+
+    Window_RingMenuStatus.prototype.itemHeight = function () {
+        return 144;
+    };
+
+    Window_RingMenuStatus.prototype.drawItemImage = function (index) {
+        var actor = $gameParty.members()[index];
+        var rect = this.itemRect(index);
+        this.changePaintOpacity(actor.isBattleMember());
+        this.drawActorFace(actor, rect.x + 4, rect.y + 4, rect.width - 8, rect.height - 8);
+    };
+
+    Window_RingMenuStatus.prototype.drawActorFace = function (actor, x, y, w, h) {
+        var width = Window_Base._faceWidth;
+        var height = Window_Base._faceHeight;
+        var bitmap = ImageManager.loadFace(actor.faceName());
+        var pw = Window_Base._faceWidth;
+        var ph = Window_Base._faceHeight;
+        var sw = Math.min(width, pw);
+        var sh = Math.min(height, ph);
+        var dx = Math.floor(x + Math.max(width - pw, 0) / 2);
+        var dy = Math.floor(y + Math.max(height - ph, 0) / 2);
+        var sx = actor.faceIndex() % 4 * pw + (pw - sw) / 2;
+        var sy = Math.floor(actor.faceIndex() / 4) * ph + (ph - sh) / 2;
+        this.contents.blt(bitmap, sx, sy, sw, sh, dx, dy, w, h);
+    };
+
+    Window_RingMenuStatus.prototype.drawItemStatus = function (index) {
+        var actor = $gameParty.members()[index];
+        var rect = this.itemRect(index);
+        var x = rect.x + 2;
+        var y = rect.y;
+        var width = 140;
+
+        this.contents.fontSize = 18;
+        this.drawText([TextManager.hpA, actor.hp].join(' '), x, y, width);
+        this.drawText([TextManager.mpA, actor.mp].join(' '), x + 50, y, width - 50, 'right');
+        this.drawText(actor.name(), x, y + 114, width);
+        this.drawText([TextManager.levelA, actor.level].join(' '), x + 70, y + 114, width - 70, 'right');
+        this.resetFontSettings();
+    };
+
+    //=============================================================================
     // Scene menu
     //=============================================================================
     var Scene_Menu_create = Scene_Menu.prototype.create;
@@ -201,7 +270,7 @@
     };
 
     Scene_Menu.prototype.createStatusWindow = function () {
-        this._statusWindow = new Window_MenuStatus(this._commandWindow.width, 0);
+        this._statusWindow = new Window_RingMenuStatus(this._commandWindow.width, 0);
     };
 
     //=============================================================================
@@ -226,64 +295,6 @@
             var item = this._list[this.index()];
             this._ringMenu.setItem(item);
         }
-    };
-
-    //=============================================================================
-    // Window menu status
-    //=============================================================================
-    Window_MenuStatus.prototype.initialize = function () {
-        var width = 180;
-        var height = Graphics.boxHeight;
-        Window_Selectable.prototype.initialize.call(this, 0, 0, width, height);
-        this._formationMode = false;
-        this._pendingIndex = -1;
-        this.loadImages();
-        this.refresh();
-    };
-
-    Window_MenuStatus.prototype.itemWidth = function () {
-        return 144;
-    };
-
-    Window_MenuStatus.prototype.itemHeight = function () {
-        return 144;
-    };
-
-    Window_MenuStatus.prototype.drawItemImage = function (index) {
-        var actor = $gameParty.members()[index];
-        var rect = this.itemRect(index);
-        this.changePaintOpacity(actor.isBattleMember());
-        this.drawActorFace(actor, rect.x + 4, rect.y + 4, rect.width - 8, rect.height - 8);
-    };
-
-    Window_MenuStatus.prototype.drawActorFace = function (actor, x, y, w, h) {
-        var width = Window_Base._faceWidth;
-        var height = Window_Base._faceHeight;
-        var bitmap = ImageManager.loadFace(actor.faceName());
-        var pw = Window_Base._faceWidth;
-        var ph = Window_Base._faceHeight;
-        var sw = Math.min(width, pw);
-        var sh = Math.min(height, ph);
-        var dx = Math.floor(x + Math.max(width - pw, 0) / 2);
-        var dy = Math.floor(y + Math.max(height - ph, 0) / 2);
-        var sx = actor.faceIndex() % 4 * pw + (pw - sw) / 2;
-        var sy = Math.floor(actor.faceIndex() / 4) * ph + (ph - sh) / 2;
-        this.contents.blt(bitmap, sx, sy, sw, sh, dx, dy, w, h);
-    };
-
-    Window_MenuStatus.prototype.drawItemStatus = function (index) {
-        var actor = $gameParty.members()[index];
-        var rect = this.itemRect(index);
-        var x = rect.x + 2;
-        var y = rect.y;
-        var width = 140;
-
-        this.contents.fontSize = 18;
-        this.drawText([TextManager.hpA, actor.hp].join(' '), x, y, width);
-        this.drawText([TextManager.mpA, actor.mp].join(' '), x + 50, y, width - 50, 'right');
-        this.drawText(actor.name(), x, y + 114, width);
-        this.drawText([TextManager.levelA, actor.level].join(' '), x + 70, y + 114, width - 70, 'right');
-        this.resetFontSettings();
     };
 
     //=============================================================================
