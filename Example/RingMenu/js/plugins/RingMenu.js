@@ -307,16 +307,12 @@
     //=============================================================================
     // Touch input
     //=============================================================================
+    var TouchInput_onMouseMove = TouchInput._onMouseMove;
     TouchInput._onMouseMove = function (event) {
-        var x = Graphics.pageToCanvasX(event.pageX);
-        var y = Graphics.pageToCanvasY(event.pageY);
-
-        if (this._mousePressed) {
-            this._onMove(x, y);
-        }
-
-        this._cursorX = x;
-        this._cursorY = y;
+        TouchInput_onMouseMove.call(this, event);
+        
+        this._cursorX = Graphics.pageToCanvasX(event.pageX);
+        this._cursorY = Graphics.pageToCanvasY(event.pageY);
     };
 
 }());
