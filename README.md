@@ -2,6 +2,10 @@
 
 RPG Maker MV Ring Menu transforms default menu into a ring menu.
 
+# Dependencies
+
+This script needs [TouchInputUpdate](https://github.com/PicusViridis/RPG-Maker-MV-TouchInputUpdate)
+
 # Usage
 
 ![Ring Menu](https://raw.githubusercontent.com/PicusViridis/RPG-Maker-MV-Ring-Menu/master/Screenshots/Ring%20Menu.png)
